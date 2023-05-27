@@ -1,6 +1,9 @@
 package exif
 
-import "time"
+import (
+	"fmt"
+	"time"
+)
 
 type RawImageBytes = []byte
 
@@ -8,7 +11,7 @@ type RawExifBytes = []byte
 
 type ExifReader interface {
 	GetExifBlob(image *RawImageBytes) (rawExif *[]byte, err error)
-	GetGPSInfo(*RawExifBytes) (*GpsInfo, error)
+	GetGPSInfo(exifData *RawExifBytes) (*GpsInfo, error)
 }
 
 // Taken from: https://github.com/dsoprea/go-exif/blob/master/v3/gps.go#L21
@@ -26,4 +29,18 @@ type GpsInfo struct {
 	Latitude, Longitude GpsDegrees
 	Altitude            int
 	Timestamp           time.Time
+}
+
+const (
+	GoExifLibrary = iota
+)
+
+func GetNewExifReader(parsingLib int) (ExifReader, error) {
+	switch parsingLib {
+	case GoExifLibrary:
+	default:
+		return new(GoExifReader), nil
+	}
+
+	return nil, fmt.Errorf("unknow error")
 }
