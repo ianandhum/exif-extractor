@@ -12,52 +12,43 @@ type GoExifReader struct {
 
 func (reader *GoExifReader) GetExifBlob(image *RawImageBytes) (rawExif *[]byte, err error) {
 	exifData, err := goExif.SearchAndExtractExif(*image)
-
 	if err != nil {
 		if err == goExif.ErrNoExif {
 			return nil, fmt.Errorf("no EXIF data found: %s", err)
 		}
-
 		return nil, fmt.Errorf("unable to read exif data from the image: %s", err)
 	}
-
 	return &exifData, nil
 }
 
 func (reader *GoExifReader) GetGPSInfo(imageBytes *RawImageBytes) (*GpsInfo, error) {
 	exifData, err := reader.GetExifBlob(imageBytes)
-
 	if err != nil {
 		return nil, fmt.Errorf("error while reading exif data: %s", err)
 	}
 
 	ifdIndex, err := reader.GetIFDFromExifBytes(exifData)
-
 	if err != nil {
 		return nil, fmt.Errorf("error while parsing exif data: %s", err)
 	}
 
 	gpsInfo, err := reader.getGPSInfoFromIFD(ifdIndex)
-
 	return gpsInfo, err
 }
 
 func (reader *GoExifReader) GetIFDFromExifBytes(exifBytes *RawExifBytes) (*goExif.IfdIndex, error) {
 
 	im, err := exifcommon.NewIfdMappingWithStandard()
-
 	if err != nil {
 		return nil, fmt.Errorf("unable to create new IFD mapping: %s", err)
 	}
 
 	ti := goExif.NewTagIndex()
-
 	_, index, err := goExif.Collect(im, ti, *exifBytes)
 
 	if err != nil {
 		return nil, fmt.Errorf("unable to collect IFD tags : %s", err)
 	}
-
 	return &index, nil
 }
 
@@ -65,13 +56,11 @@ func (reader *GoExifReader) getGPSInfoFromIFD(ifdIndex *goExif.IfdIndex) (*GpsIn
 
 	// Get the GPS tag from exit data
 	ifd, err := ifdIndex.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity)
-
 	if err != nil {
 		return nil, fmt.Errorf("unable to collect GPS IFD tag : %s", err)
 	}
 
 	gi, err := ifd.GpsInfo()
-
 	if err != nil {
 		return nil, fmt.Errorf("unable to get GPSInfo from IFD : %s", err)
 	}
