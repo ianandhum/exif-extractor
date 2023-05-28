@@ -26,7 +26,7 @@ type cmdOptions struct {
 func exitWithUsage(message string) {
 	fmt.Fprint(os.Stderr, message)
 	fmt.Fprintln(os.Stderr)
-	fmt.Fprintf(os.Stderr, "Usage: ")
+	fmt.Fprintln(os.Stderr, "Usage: ")
 	flag.PrintDefaults()
 	os.Exit(1)
 }
