@@ -20,7 +20,7 @@ const (
 )
 
 func TestExifReaderSelector(t *testing.T) {
-	exifReader, err := exif.GetNewExifReader(exif.GoExifLibrary)
+	exifReader, err := exif.NewExifReader(exif.GoExifLibrary)
 	assert.NoError(t, err)
 
 	assert.True(t, reflect.TypeOf(exifReader).Name() != "GoExifReader")
@@ -38,21 +38,22 @@ func TestExifDataReader(t *testing.T) {
 	cwd, err := os.Getwd()
 	assert.NoError(t, err)
 
-	readImage := func(filePath string) *exif.RawImageBytes {
+	readImage := func(filePath string) exif.RawImageBytes {
 		imagePath, err := filepath.Abs(path.Join(cwd, filePath))
 		assert.NoError(t, err)
 
 		imageBytes, err := os.ReadFile(imagePath)
 		assert.NoError(t, err, "Image read failed, fix the test case")
 
-		return &imageBytes
+		return imageBytes
 	}
 
-	exifReader := new(exif.GoExifReader)
+	exifReader, err := exif.NewExifReader(exif.GoExifLibrary)
+	assert.NoError(t, err)
 
 	t.Run("fail on empty image input", func(t *testing.T) {
 		emptyImage := exif.RawImageBytes{}
-		_, err := exifReader.GetGPSInfo(&emptyImage)
+		_, err := exifReader.GetGPSInfo(emptyImage)
 
 		assert.Error(t, err)
 	})
@@ -64,7 +65,7 @@ func TestExifDataReader(t *testing.T) {
 		exifBytes, err := exifReader.GetExifBlob(imageBytes)
 		assert.NoError(t, err)
 
-		_, err = exifReader.GetIFDFromExifBytes(exifBytes)
+		_, err = exifReader.GetGPSInfo(exifBytes)
 		assert.Error(t, err)
 	})
 

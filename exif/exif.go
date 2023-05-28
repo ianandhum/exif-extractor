@@ -1,6 +1,7 @@
 package exif
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -9,8 +10,8 @@ type RawImageBytes = []byte
 type RawExifBytes = []byte
 
 type ExifReader interface {
-	GetExifBlob(image *RawImageBytes) (rawExif *[]byte, err error)
-	GetGPSInfo(exifData *RawExifBytes) (*GpsInfo, error)
+	GetExifBlob(image RawImageBytes) (rawExif RawExifBytes, err error)
+	GetGPSInfo(exifData RawExifBytes) (*GpsInfo, error)
 }
 
 // Taken from: https://github.com/dsoprea/go-exif/blob/master/v3/gps.go#L21
@@ -30,13 +31,17 @@ type GpsInfo struct {
 	Timestamp           time.Time
 }
 
+type ExifReaderType string
+
 const (
-	GoExifLibrary = iota
+	GoExifLibrary ExifReaderType = "go-exif"
 )
 
-func GetNewExifReader(parsingLib int) (ExifReader, error) {
+func NewExifReader(parsingLib ExifReaderType) (ExifReader, error) {
 	switch parsingLib {
+	case GoExifLibrary:
+		return new(goExifReader), nil
 	default:
-		return new(GoExifReader), nil
+		return nil, fmt.Errorf("unknown exporter type: %s", parsingLib)
 	}
 }

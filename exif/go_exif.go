@@ -7,21 +7,21 @@ import (
 	exifcommon "github.com/dsoprea/go-exif/v3/common"
 )
 
-type GoExifReader struct {
+type goExifReader struct {
 }
 
-func (reader *GoExifReader) GetExifBlob(image *RawImageBytes) (rawExif *[]byte, err error) {
-	exifData, err := goExif.SearchAndExtractExif(*image)
+func (reader *goExifReader) GetExifBlob(image RawImageBytes) (rawExif RawExifBytes, err error) {
+	exifData, err := goExif.SearchAndExtractExif(image)
 	if err != nil {
 		if err == goExif.ErrNoExif {
 			return nil, fmt.Errorf("no EXIF data found: %s", err)
 		}
 		return nil, fmt.Errorf("unable to read exif data from the image: %s", err)
 	}
-	return &exifData, nil
+	return exifData, nil
 }
 
-func (reader *GoExifReader) GetGPSInfo(imageBytes *RawImageBytes) (*GpsInfo, error) {
+func (reader *goExifReader) GetGPSInfo(imageBytes RawImageBytes) (*GpsInfo, error) {
 	exifData, err := reader.GetExifBlob(imageBytes)
 	if err != nil {
 		return nil, fmt.Errorf("error while reading exif data: %s", err)
@@ -36,7 +36,7 @@ func (reader *GoExifReader) GetGPSInfo(imageBytes *RawImageBytes) (*GpsInfo, err
 	return gpsInfo, err
 }
 
-func (reader *GoExifReader) GetIFDFromExifBytes(exifBytes *RawExifBytes) (*goExif.IfdIndex, error) {
+func (reader *goExifReader) GetIFDFromExifBytes(exifBytes RawExifBytes) (*goExif.IfdIndex, error) {
 
 	im, err := exifcommon.NewIfdMappingWithStandard()
 	if err != nil {
@@ -44,7 +44,7 @@ func (reader *GoExifReader) GetIFDFromExifBytes(exifBytes *RawExifBytes) (*goExi
 	}
 
 	ti := goExif.NewTagIndex()
-	_, index, err := goExif.Collect(im, ti, *exifBytes)
+	_, index, err := goExif.Collect(im, ti, exifBytes)
 
 	if err != nil {
 		return nil, fmt.Errorf("unable to collect IFD tags : %s", err)
@@ -52,14 +52,13 @@ func (reader *GoExifReader) GetIFDFromExifBytes(exifBytes *RawExifBytes) (*goExi
 	return &index, nil
 }
 
-func (reader *GoExifReader) getGPSInfoFromIFD(ifdIndex *goExif.IfdIndex) (*GpsInfo, error) {
+func (reader *goExifReader) getGPSInfoFromIFD(ifdIndex *goExif.IfdIndex) (*GpsInfo, error) {
 
 	// Get the GPS tag from exit data
 	ifd, err := ifdIndex.RootIfd.ChildWithIfdPath(exifcommon.IfdGpsInfoStandardIfdIdentity)
 	if err != nil {
 		return nil, fmt.Errorf("unable to collect GPS IFD tag : %s", err)
 	}
-
 	gi, err := ifd.GpsInfo()
 	if err != nil {
 		return nil, fmt.Errorf("unable to get GPSInfo from IFD : %s", err)

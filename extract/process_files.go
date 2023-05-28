@@ -9,10 +9,10 @@ import (
 	"github.com/ianandhum/exif-extractor/exif"
 )
 
-func ExtractGPSInfoFromDir(folderPath string) (map[string]*exif.GpsInfo, error) {
+func ExtractGPSInfoFromDir(folderPath string, exifLib exif.ExifReaderType, includeHiddenFiles bool) (map[string]*exif.GpsInfo, error) {
 	walkOptions := new(WalkOptions)
 	walkOptions.SourceDir = folderPath
-	walkOptions.IncludeHiddenFiles = false
+	walkOptions.IncludeHiddenFiles = includeHiddenFiles
 
 	files, err := GetFilesInDir(walkOptions)
 	if err != nil {
@@ -22,10 +22,10 @@ func ExtractGPSInfoFromDir(folderPath string) (map[string]*exif.GpsInfo, error) 
 	resultMap := map[string]*exif.GpsInfo{}
 
 	for _, file := range files {
-		gpsInfo, err := ExtractGPSInfoFromFile(file)
+		gpsInfo, err := ExtractGPSInfoFromFile(file, exifLib)
 		if err != nil {
 			// TODO should this be fatal?
-			log.Printf("WARN: unable to read gpsInfo from file: %s", file)
+			log.Printf("WARN: unable to read gpsInfo: %s(path: %s)", err, file)
 			continue
 		}
 
@@ -35,12 +35,12 @@ func ExtractGPSInfoFromDir(folderPath string) (map[string]*exif.GpsInfo, error) 
 	return resultMap, nil
 }
 
-func ExtractGPSInfoFromFile(filePath string) (*exif.GpsInfo, error) {
+func ExtractGPSInfoFromFile(filePath string, exifLib exif.ExifReaderType) (*exif.GpsInfo, error) {
 	content, err := readImageFile(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("error occured while extracting gps info: %s", err)
 	}
-	exifReader, err := exif.GetNewExifReader(exif.GoExifLibrary)
+	exifReader, err := exif.NewExifReader(exifLib)
 	if err != nil {
 		return nil, fmt.Errorf("error occured while getting exif reader: %s", err)
 	}
@@ -48,7 +48,7 @@ func ExtractGPSInfoFromFile(filePath string) (*exif.GpsInfo, error) {
 	return exifReader.GetGPSInfo(content)
 }
 
-func readImageFile(filePath string) (*exif.RawImageBytes, error) {
+func readImageFile(filePath string) (exif.RawImageBytes, error) {
 
 	if !isImageFile(filePath) {
 		return nil, fmt.Errorf("'%s' is not and image file", filePath)
@@ -59,7 +59,7 @@ func readImageFile(filePath string) (*exif.RawImageBytes, error) {
 		return nil, fmt.Errorf("error occured while reading file: %s", err)
 	}
 
-	return &imageBytes, nil
+	return imageBytes, nil
 }
 
 func isImageFile(filePath string) bool {
