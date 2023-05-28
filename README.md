@@ -18,7 +18,9 @@ cd exif-extractor
 Install dependencies by `go get` and build the binary
 
 ```
-go build cmd/exif_gps_extractor.go
+cd cmd
+go get
+go build exif_gps_extractor.go
 ```
 
 ## Usage: 
