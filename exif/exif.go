@@ -42,6 +42,6 @@ func NewExifReader(parsingLib ExifReaderType) (ExifReader, error) {
 	case GoExifLibrary:
 		return new(goExifReader), nil
 	default:
-		return nil, fmt.Errorf("unknown exporter type: %s", parsingLib)
+		return nil, fmt.Errorf("unknown exif reader type: %s", parsingLib)
 	}
 }
