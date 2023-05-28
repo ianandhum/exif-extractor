@@ -118,4 +118,8 @@ func main() {
 	if err := exporter.ExportAsStream(getOutputHeader(), flattenExifGpsInfo(exifInfo), outputWriter); err != nil {
 		fmt.Fprintf(os.Stderr, "error occured while writing result: %s", err)
 	}
+
+	if cmdOptions.outputPath != "-" {
+		fmt.Fprintf(os.Stderr, "Extracted data successfully written to '%s'\n", cmdOptions.outputPath)
+	}
 }
