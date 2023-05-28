@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	imagesFolder  = "../testdata/images/"
-	expectedCount = 7
+	imagesFolder      = "../testdata/images/"
+	expectedFileCount = 7
 )
 
 func TestFileList(t *testing.T) {
@@ -31,14 +31,12 @@ func TestFileList(t *testing.T) {
 		path, err := filepath.Abs(path.Join(cwd, imagesFolder))
 		assert.NoError(t, err)
 
-		fileList := new(extract.FileList)
-		fileList.SourceDir = path
-		fileList.IncludeHiddenFiles = false
+		walkOptions := new(extract.WalkOptions)
+		walkOptions.SourceDir = path
+		walkOptions.IncludeHiddenFiles = false
 
-		assert.NoError(t, fileList.Populate())
-
-		files, err := fileList.GetFiles()
+		files, err := extract.GetFilesInDir(walkOptions)
 		assert.NoError(t, err)
-		assert.Equal(t, 7, len(files))
+		assert.Equal(t, expectedFileCount, len(files))
 	})
 }

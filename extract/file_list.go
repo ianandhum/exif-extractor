@@ -8,23 +8,14 @@ import (
 	"github.com/ianandhum/exif-extractor/util"
 )
 
-type FileList struct {
+type WalkOptions struct {
 	SourceDir          string
 	IncludeHiddenFiles bool
-
-	files []string
 }
 
-func (dirList *FileList) GetFiles() ([]string, error) {
-	if dirList.files == nil {
-		return nil, fmt.Errorf("files list is empty")
-	}
-
-	return dirList.files, nil
-}
-
-func (dirList *FileList) Populate() (err error) {
-	return filepath.Walk(dirList.SourceDir, func(path string, info os.FileInfo, err error) error {
+func GetFilesInDir(walkOptions *WalkOptions) ([]string, error) {
+	fileList := []string{}
+	err := filepath.Walk(walkOptions.SourceDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -43,11 +34,18 @@ func (dirList *FileList) Populate() (err error) {
 			return nil
 		}
 
-		if !dirList.IncludeHiddenFiles && isHidden {
+		if !walkOptions.IncludeHiddenFiles && isHidden {
 			return nil
 		}
 
-		dirList.files = append(dirList.files, path)
+		fileList = append(fileList, path)
 		return nil
 	})
+
+	if err != nil {
+		return nil, fmt.Errorf("unable to get file list: %s", err)
+	}
+
+	return fileList, nil
+
 }

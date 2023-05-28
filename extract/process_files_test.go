@@ -14,6 +14,10 @@ const (
 	inValidGIFImageFilePath   = "../testdata/images/more_images/david.gif" // EXIF is not supported by GIF format
 )
 
+const (
+	expectedGpsDirMapLength = 4
+)
+
 func TestFileProcessing(t *testing.T) {
 	defer func() {
 		if state := recover(); state != nil {
@@ -39,7 +43,7 @@ func TestFileProcessing(t *testing.T) {
 		gpsInfoMap, err := extract.ExtractGPSInfoFromDir(imagesDir)
 
 		assert.NoError(t, err)
-		assert.Equal(t, 4, len(gpsInfoMap))
+		assert.Equal(t, expectedGpsDirMapLength, len(gpsInfoMap))
 	})
 
 }

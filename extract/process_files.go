@@ -10,16 +10,11 @@ import (
 )
 
 func ExtractGPSInfoFromDir(folderPath string) (map[string]*exif.GpsInfo, error) {
-	fileList := new(FileList)
-	fileList.SourceDir = folderPath
-	fileList.IncludeHiddenFiles = false
+	walkOptions := new(WalkOptions)
+	walkOptions.SourceDir = folderPath
+	walkOptions.IncludeHiddenFiles = false
 
-	err := fileList.Populate()
-	if err != nil {
-		return nil, fmt.Errorf("error occured while loading file list: %s", err)
-	}
-
-	files, err := fileList.GetFiles()
+	files, err := GetFilesInDir(walkOptions)
 	if err != nil {
 		return nil, fmt.Errorf("error occured while getting file list: %s", err)
 	}
