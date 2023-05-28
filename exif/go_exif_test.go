@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"reflect"
 	"testing"
 
 	"github.com/ianandhum/exif-extractor/exif"
@@ -17,6 +18,14 @@ const (
 	validEXIFGPSImageFilePath = "../testdata/images/more_images/wax-card.jpg"
 	inValidGIFImageFilePath   = "../testdata/images/more_images/david.gif" // EXIF is not supported by GIF format
 )
+
+func TestExifReaderSelector(t *testing.T) {
+	exifReader, err := exif.GetNewExifReader(exif.GoExifLibrary)
+	assert.NoError(t, err)
+
+	assert.True(t, reflect.TypeOf(exifReader).Name() != "GoExifReader")
+
+}
 
 func TestExifDataReader(t *testing.T) {
 	defer func() {

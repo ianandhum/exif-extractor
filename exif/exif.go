@@ -1,7 +1,6 @@
 package exif
 
 import (
-	"fmt"
 	"time"
 )
 
@@ -37,10 +36,7 @@ const (
 
 func GetNewExifReader(parsingLib int) (ExifReader, error) {
 	switch parsingLib {
-	case GoExifLibrary:
 	default:
 		return new(GoExifReader), nil
 	}
-
-	return nil, fmt.Errorf("unknow error")
 }
