@@ -5,16 +5,19 @@ import (
 	"time"
 )
 
+// RawImageBytes represents entire image as []byte
 type RawImageBytes = []byte
 
+// RawExifBytes represents exif section of an image as []byte
 type RawExifBytes = []byte
 
-type ExifReader interface {
+// Reader parses EXIF data from and image
+type Reader interface {
 	GetExifBlob(image RawImageBytes) (rawExif RawExifBytes, err error)
 	GetGPSInfo(exifData RawExifBytes) (*GpsInfo, error)
 }
 
-// Taken from: https://github.com/dsoprea/go-exif/blob/master/v3/gps.go#L21
+// GpsDegrees Taken from: https://github.com/dsoprea/go-exif/blob/master/v3/gps.go#L21
 type GpsDegrees struct {
 	Orientation byte
 
@@ -25,19 +28,23 @@ type GpsDegrees struct {
 	Seconds float64
 }
 
+// GpsInfo represents a GPS co-ordinate
 type GpsInfo struct {
 	Latitude, Longitude GpsDegrees
 	Altitude            int
 	Timestamp           time.Time
 }
 
-type ExifReaderType string
+// ReaderType represents the exif reader library to be used
+type ReaderType string
 
 const (
-	GoExifLibrary ExifReaderType = "go-exif"
+	// GoExifLibrary parse EXIF info using go-exif go module
+	GoExifLibrary ReaderType = "go-exif"
 )
 
-func NewExifReader(parsingLib ExifReaderType) (ExifReader, error) {
+// NewExifReader creates a new instance of exif.Reader
+func NewExifReader(parsingLib ReaderType) (Reader, error) {
 	switch parsingLib {
 	case GoExifLibrary:
 		return new(goExifReader), nil

@@ -12,6 +12,7 @@ func convertToDecimalDegrees(gpsDegrees GpsDegrees) float64 {
 	return decimalDegrees
 }
 
+// ConvertToLatLong converts GpsInfo into (lat, long) co-ordinates
 func ConvertToLatLong(gpsInfo *GpsInfo) (float64, float64) {
 	latitude := convertToDecimalDegrees(gpsInfo.Latitude)
 	longitude := convertToDecimalDegrees(gpsInfo.Longitude)

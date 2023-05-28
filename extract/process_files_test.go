@@ -28,20 +28,20 @@ func TestFileProcessing(t *testing.T) {
 	}()
 
 	t.Run("extract GPS info from a valid file", func(t *testing.T) {
-		gpsInfo, err := extract.ExtractGPSInfoFromFile(validEXIFGPSImageFilePath, exif.GoExifLibrary)
+		gpsInfo, err := extract.GPSInfoFromFile(validEXIFGPSImageFilePath, exif.GoExifLibrary)
 
 		assert.NoError(t, err)
 		assert.NotEmpty(t, gpsInfo)
 	})
 
 	t.Run("fail GPS info extraction on gif file", func(t *testing.T) {
-		_, err := extract.ExtractGPSInfoFromFile(inValidGIFImageFilePath, exif.GoExifLibrary)
+		_, err := extract.GPSInfoFromFile(inValidGIFImageFilePath, exif.GoExifLibrary)
 
 		assert.Error(t, err)
 	})
 
 	t.Run("extract gps info from image files in a directory", func(t *testing.T) {
-		gpsInfoMap, err := extract.ExtractGPSInfoFromDir(imagesDir, exif.GoExifLibrary, false)
+		gpsInfoMap, err := extract.GPSInfoFromDir(imagesDir, exif.GoExifLibrary, false)
 
 		assert.NoError(t, err)
 		assert.Equal(t, expectedGpsDirMapLength, len(gpsInfoMap))

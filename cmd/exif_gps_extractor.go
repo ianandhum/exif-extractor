@@ -15,7 +15,7 @@ import (
 
 const exifReaderLib = exif.GoExifLibrary
 
-type CmdOptions struct {
+type cmdOptions struct {
 	sourceDir          string
 	includeHiddenFiles bool
 
@@ -40,7 +40,7 @@ func isDir(path string) bool {
 	return fi.IsDir()
 }
 
-func parseArgs() *CmdOptions {
+func parseArgs() *cmdOptions {
 	dir := flag.String("dir", "", "Path to image folder")
 	includeHiddenFiles := flag.Bool("include-hidden-files", false, "Include hidden files in the directory")
 
@@ -58,7 +58,7 @@ func parseArgs() *CmdOptions {
 		exitWithUsage("Error, --output argument should have a valid dir path")
 	}
 
-	return &CmdOptions{
+	return &cmdOptions{
 		sourceDir:          sourceDir,
 		includeHiddenFiles: *includeHiddenFiles,
 
@@ -91,7 +91,7 @@ func main() {
 		exitWithUsage(fmt.Sprintf("Invalid output format: %s", cmdOptions.outputFormat))
 	}
 
-	exifInfo, err := extract.ExtractGPSInfoFromDir(cmdOptions.sourceDir, exifReaderLib, cmdOptions.includeHiddenFiles)
+	exifInfo, err := extract.GPSInfoFromDir(cmdOptions.sourceDir, exifReaderLib, cmdOptions.includeHiddenFiles)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error occured while reading exif info: %s", err)
 		os.Exit(1)
