@@ -19,6 +19,8 @@ func TestCSVExport(t *testing.T) {
 		{"/tmp/test3.png", "77.10", "12.51"},
 	}
 
+	header := []string{"File", "Latitude", "Longitude"}
+
 	expected := "/tmp/test.png,77.12,12.56\n/tmp/test2.png,77.13,12.52\n/tmp/test3.png,77.10,12.51\n"
 	expectedWithHeader := "File,Latitude,Longitude\n/tmp/test.png,77.12,12.56\n/tmp/test2.png,77.13,12.52\n/tmp/test3.png,77.10,12.51\n"
 
@@ -33,7 +35,6 @@ func TestCSVExport(t *testing.T) {
 
 	t.Run("test csv export for simple document with header", func(t *testing.T) {
 
-		header := []string{"File", "Latitude", "Longitude"}
 		csvData, err := exporter.ExportAsBytes(header, data)
 
 		assert.NoError(t, err)
@@ -43,7 +44,6 @@ func TestCSVExport(t *testing.T) {
 
 	t.Run("test csv export for simple document as stream", func(t *testing.T) {
 
-		header := []string{"File", "Latitude", "Longitude"}
 		buffer := new(bytes.Buffer)
 
 		err := exporter.ExportAsStream(header, data, buffer)
@@ -55,7 +55,6 @@ func TestCSVExport(t *testing.T) {
 
 	t.Run("test csv export for simple document as stream with partial calls", func(t *testing.T) {
 
-		header := []string{"File", "Latitude", "Longitude"}
 		buffer := new(bytes.Buffer)
 
 		err := exporter.ExportAsStream(header, data[:2], buffer)

@@ -21,6 +21,8 @@ func NewExporter(exporterType ExporterType) (Exporter, error) {
 	switch exporterType {
 	case CSVExporterType:
 		return new(csvExporter), nil
+	case HTMLExporerType:
+		return new(htmlExporter), nil
 	default:
 		return nil, fmt.Errorf("unknown exporter type: %s", exporterType)
 	}
