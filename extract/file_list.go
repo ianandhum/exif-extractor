@@ -30,8 +30,7 @@ func GetFilesInDir(walkOptions *WalkOptions) ([]string, error) {
 			return nil
 		}
 
-		_, fileName := filepath.Split(path)
-		isHidden, err := util.IsHiddenFile(fileName)
+		isHidden, err := util.IsHiddenFile(path)
 		if err != nil {
 			return nil
 		}

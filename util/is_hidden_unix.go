@@ -2,6 +2,9 @@
 
 package util
 
-func IsHiddenFile(filename string) (bool, error) {
-	return filename[0] == '.', nil
+import "path/filepath"
+
+func IsHiddenFile(path string) (bool, error) {
+	_, fileName := filepath.Split(path)
+	return fileName[0] == '.', nil
 }
