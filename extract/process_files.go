@@ -71,6 +71,10 @@ func isImageFile(filePath string) bool {
 		return false
 	}
 
+	defer func() {
+		file.Close()
+	}()
+
 	// only first 261 bytes are needed
 	head := make([]byte, 261)
 	file.Read(head)

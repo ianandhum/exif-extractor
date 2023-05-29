@@ -6,8 +6,8 @@ import (
 	"syscall"
 )
 
-func IsHiddenFile(filename string) (bool, error) {
-	pointer, err := syscall.UTF16PtrFromString(filename)
+func IsHiddenFile(path string) (bool, error) {
+	pointer, err := syscall.UTF16PtrFromString(path)
 	if err != nil {
 		return false, err
 	}
